@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
+// 供waitpid使用
 static pid_t *childpid = NULL;
 static int maxfd;
 
@@ -49,6 +50,7 @@ FILE *popen(const char *cmdstring, const char *type) {
       }
     }
 
+    // 关闭那些以前调用popen打开的，现在仍然在子进程中打开的I/O流
     for (i = 0; i < maxfd; i++)
       if (childpid[i] > 0)
         close(i);
@@ -93,6 +95,7 @@ int pclose(FILE *fp) {
   if (fclose(fp) == EOF)
     return (-1);
 
+  // 若pclose调用者已为信号SIGCHID设置了信号处理程序，则waitpid设置errno为EINTR，不断重复调用waitpid即可
   while (waitpid(pid, &stat, 0) < 0)
     if (errno != EINTR)
       return (-1);
