@@ -4,7 +4,7 @@
 #define MAXSLEEP 128
 
 // 不可移植，若connect失败，套接字状态为未定义
-int connect_retry(int sockfd, const struct sockaddr *addr, socklen_t alen) {
+int connect_retry_old(int sockfd, const struct sockaddr *addr, socklen_t alen) {
   int numsec;
 
   for (numsec = 1; numsec <= MAXSLEEP; numsec <<= 1) {
